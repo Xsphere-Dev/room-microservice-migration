@@ -13,7 +13,7 @@ model user {
   last_name           String    @map("last_name")
   full_name           String?
   room_user_name      String?   @unique @map("room_user_name")
-  is_verified         Boolean   @default(false) @map("is_verified")
+  is_premiumed        Boolean   @default(false) @map("is_premiumed")
   password_updated_at DateTime? @map("password_updated_at")
   last_password       String?   @map("last_password")
 
