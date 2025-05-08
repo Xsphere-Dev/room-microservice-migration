@@ -1,0 +1,75 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("USER_SERIVCE_DATABASE_URL")
+}
+
+model user {
+  id                  String    @id @default(cuid())
+  first_name          String    @map("first_name")
+  last_name           String    @map("last_name")
+  full_name           String?
+  room_user_name      String?   @unique @map("room_user_name")
+  is_verified         Boolean   @default(false) @map("is_verified")
+  password_updated_at DateTime? @map("password_updated_at")
+  last_password       String?   @map("last_password")
+
+  email              String?              @unique
+  phone              String?              @unique
+  password           String?
+  created_at         DateTime             @default(now()) @map("created_at")
+  updated_at         DateTime             @updatedAt @map("updated_at")
+  user_login_details user_login_details?
+  follower           follows[]            @relation("follower")
+  following          follows[]            @relation("following")
+  user_profile_image user_profile_image[]
+
+  @@map("users")
+}
+
+model user_profile_image {
+  user_id      String    @map("user_id")
+  user         user      @relation(references: [id], fields: [user_id])
+  document_id  String    @unique @map("document_id")
+  document     documents @relation(references: [id], fields: [document_id])
+  is_active    Boolean   @default(true)
+  last_used_at DateTime  @map("last_used_at")
+
+  @@unique([user_id, document_id])
+}
+
+model user_login_details {
+  id                    String    @id @default(cuid())
+  user_id               String    @unique @map("user_id")
+  user                  user      @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  last_login            DateTime? @map("last_login")
+  last_login_ip         String?   @map("last_login_ip")
+  last_login_user_agent String?   @map("last_login_user_agent")
+  last_login_location   String?   @map("last_login_location")
+
+  @@map("user_login_details")
+}
+
+model follows {
+  id         String   @id @default(uuid())
+  created_at DateTime @default(now())
+
+  follower_id  String
+  follower     user   @relation("follower", fields: [follower_id], references: [id], onDelete: Cascade)
+  following_id String
+  following    user   @relation("following", fields: [following_id], references: [id], onDelete: Cascade)
+
+  @@unique([follower_id, following_id])
+}
+
+model documents {
+  id   String @id @default(uuid()) @db.VarChar(255)
+  path String @unique @db.VarChar(255)
+
+  created_at         DateTime            @default(now())
+  updated_at         DateTime            @updatedAt
+  user_profile_image user_profile_image?
+}

@@ -1,0 +1,220 @@
+// // This is your Prisma schema file,
+// // learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// // Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+// generator client {
+//   provider = "prisma-client-js"
+// }
+
+// datasource db {
+//   provider = "postgresql"
+//   url      = env("DATABASE_URL")
+// }
+
+// model user {
+//   id                String            @id @default(cuid())
+//   firstName         String            @map("first_name")
+//   lastName          String            @map("last_name")
+//   fullname          String?
+//   roomUserName      String?           @unique @map("room_user_name")
+//   passwordUpdatedAt DateTime?         @map("password_updated_at")
+//   lastPassword      String?           @map("last_password")
+//   email             String?           @unique
+//   phone             String?           @unique
+//   password          String?
+//   createdAt         DateTime          @default(now()) @map("created_at")
+//   updatedAt         DateTime          @updatedAt @map("updated_at")
+//   userLoginDetails  userLoginDetails?
+//   stories           stories[]
+//   story_views       story_views[]
+//   main_feed         main_feed[]
+//   follower          follows[]         @relation("follower")
+//   following         follows[]         @relation("following")
+
+//   @@map("users")
+// }
+
+// model userLoginDetails {
+//   id                 String    @id @default(cuid())
+//   userId             String    @unique @map("user_id")
+//   user               user      @relation(fields: [userId], references: [id], onDelete: Cascade)
+//   lastLogin          DateTime? @map("last_login")
+//   lastLoginIp        String?   @map("last_login_ip")
+//   lastLoginUserAgent String?   @map("last_login_user_agent")
+//   lastLoginLocation  String?   @map("last_login_location")
+
+//   @@map("user_login_details")
+// }
+
+// model stories {
+//   id               String            @id @default(uuid()) @db.VarChar(255)
+//   user_id          String            @db.VarChar(255)
+//   user             user              @relation(fields: [user_id], references: [id], onDelete: Cascade)
+//   post_date_time   DateTime
+//   is_active        Boolean           @default(true)
+//   is_deleted       Boolean           @default(false)
+//   document_id      String?           @unique @db.VarChar(255)
+//   document         documents?        @relation(fields: [document_id], references: [id], onDelete: Cascade)
+//   media_type       media_type
+//   feed_audience    feed_audience     @default(FRIENDS)
+//   created_at       DateTime          @default(now())
+//   updated_at       DateTime          @updatedAt
+//   story_views      story_views[]
+//   stories_specific stories_specific?
+//   stories_except   stories_except?
+// }
+
+// model stories_specific {
+//   id           String   @id @default(uuid()) @db.VarChar(255)
+//   main_feed_id String   @unique @db.VarChar(255)
+//   stories      stories  @relation(fields: [main_feed_id], references: [id], onDelete: Cascade)
+//   user_id      String[]
+// }
+
+// model stories_except {
+//   id           String   @id @default(uuid()) @db.VarChar(255)
+//   main_feed_id String   @unique @db.VarChar(255)
+//   stories      stories  @relation(fields: [main_feed_id], references: [id], onDelete: Cascade)
+//   user_id      String[]
+// }
+
+// model story_views {
+//   id                String         @id @default(uuid())
+//   story             stories        @relation(fields: [storyId], references: [id], onDelete: Cascade)
+//   storyId           String
+//   is_story_reaction Boolean        @default(false)
+//   reaction_type     reaction_type?
+//   viewerId          String
+//   user              user           @relation(fields: [viewerId], references: [id], onDelete: Cascade)
+//   viewedAt          DateTime       @default(now())
+
+//   @@unique([storyId, viewerId])
+// }
+
+// model main_feed {
+//   id                     String                   @id @default(uuid()) @db.VarChar(255)
+//   user_id                String                   @db.VarChar(255)
+//   user                   user                     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+//   caption                String?                  @db.VarChar(255)
+//   is_sponsored           Boolean                  @default(false)
+//   is_shared              Boolean                  @default(false)
+//   shared_from_id         String?                  @db.VarChar(255) // reference to original feed
+//   feed_audience          feed_audience            @default(FRIENDS)
+//   created_at             DateTime                 @default(now())
+//   updated_at             DateTime                 @updatedAt
+//   // Relations
+//   shared_from            main_feed?               @relation("shared_post", fields: [shared_from_id], references: [id])
+//   shared_posts           main_feed[]              @relation("shared_post")
+//   main_feed_on_documents main_feed_on_documents[]
+//   main_feed_specific     main_feed_specific?
+//   main_feed_except       main_feed_except?
+// }
+
+// model main_feed_on_documents {
+//   id           String     @id @default(uuid()) @db.VarChar(255)
+//   document_id  String     @db.VarChar(255)
+//   main_feed_id String     @db.VarChar(255)
+//   is_active    Boolean    @default(true)
+//   is_deleted   Boolean    @default(false)
+//   media_type   media_type
+//   view_count   Int        @default(0)
+//   created_at   DateTime   @default(now())
+//   updated_at   DateTime   @updatedAt
+//   document     documents? @relation(fields: [document_id], references: [id], onDelete: Cascade)
+//   main_feed    main_feed? @relation(fields: [main_feed_id], references: [id], onDelete: Cascade)
+// }
+
+// model main_feed_specific {
+//   id           String    @id @default(uuid()) @db.VarChar(255)
+//   main_feed_id String    @unique @db.VarChar(255)
+//   main_feed    main_feed @relation(fields: [main_feed_id], references: [id], onDelete: Cascade)
+//   user_id      String[]
+// }
+
+// model main_feed_except {
+//   id           String    @id @default(uuid()) @db.VarChar(255)
+//   main_feed_id String    @unique @db.VarChar(255)
+//   main_feed    main_feed @relation(fields: [main_feed_id], references: [id], onDelete: Cascade)
+//   user_id      String[]
+// }
+
+// model documents {
+//   id                     String                   @id @default(uuid()) @db.VarChar(255)
+//   path                   String                   @unique @db.VarChar(255)
+//   created_at             DateTime                 @default(now())
+//   updated_at             DateTime                 @updatedAt
+//   stories                stories?
+//   main_feed_on_documents main_feed_on_documents[]
+// }
+
+// model follows {
+//   id           String   @id @default(uuid())
+//   created_at   DateTime @default(now())
+//   follower_id  String //1 //2
+//   follower     user     @relation("follower", fields: [follower_id], references: [id], onDelete: Cascade)
+//   following_id String //2 //1
+//   following    user     @relation("following", fields: [following_id], references: [id], onDelete: Cascade)
+
+//   @@unique([follower_id, following_id]) // Prevent duplicate follow
+// }
+
+// model main_feed_reaction {
+//   id            String   @id @default(uuid())
+//   created_at    DateTime @default(now())
+//   user_id       String //1
+//   post_id       String //2
+//   reaction_type String //1
+
+//   @@unique([user_id, post_id])
+// }
+
+// model main_feed_comment {
+//   id                String                    @id @default(uuid())
+//   post_id           String // ID of the post the comment is on
+//   user_id           String // ID of the user who made the comment
+//   content           String?
+//   is_included_media Boolean                   @default(false) // Indicates if the comment includes media
+//   media_url         String? // URL of the media if included
+//   created_at        DateTime                  @default(now())
+//   updated_at        DateTime                  @updatedAt
+//   // Relations
+//   replies           main_feed_comment_reply[]
+// }
+
+// model main_feed_comment_reply {
+//   id                String            @id @default(uuid())
+//   comment_id        String // Links to the comment this is replying to
+//   user_id           String // ID of the user replying
+//   content           String?
+//   is_included_media Boolean           @default(false) // Indicates if the comment includes media
+//   media_url         String? // URL of the media if included
+//   created_at        DateTime          @default(now())
+//   updated_at        DateTime          @updatedAt
+//   // Relations
+//   comment           main_feed_comment @relation(fields: [comment_id], references: [id])
+// }
+
+// enum feed_audience {
+//   PUBLIC
+//   FRIENDS
+//   PRIVATE
+//   EXCEPT
+//   SPECIFIC
+//   FRIENDS_OF_FRIENDS
+// }
+
+// enum media_type {
+//   image
+//   video
+// }
+
+// enum reaction_type {
+//   like
+//   love
+//   haha
+//   wow
+//   sad
+//   angry
+// }
