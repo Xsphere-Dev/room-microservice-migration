@@ -8,17 +8,18 @@ datasource db {
 }
 
 model stories {
-  id             String        @id @default(uuid()) @db.VarChar(255)
-  user_id        String        @db.VarChar(255)
-  post_date_time DateTime
-  is_active      Boolean       @default(true)
-  is_deleted     Boolean       @default(false)
-  document_id    String?       @unique @db.VarChar(255)
-  document       documents?    @relation(fields: [document_id], references: [id], onDelete: Cascade)
-  media_type     media_type
-  feed_audience  feed_audience @default(FRIENDS)
-  created_at     DateTime      @default(now())
-  updated_at     DateTime      @updatedAt
+  id                  String        @id @default(uuid()) @db.VarChar(255)
+  user_id             String        @db.VarChar(255)
+  post_date_time      DateTime
+  is_active           Boolean       @default(true)
+  is_deleted          Boolean       @default(false)
+  document_id         String?       @unique @db.VarChar(255)
+  document            documents?    @relation(fields: [document_id], references: [id], onDelete: Cascade)
+  media_type          media_type
+  duration_in_seconds Int           @default(0)
+  feed_audience       feed_audience @default(FRIENDS)
+  created_at          DateTime      @default(now())
+  updated_at          DateTime      @updatedAt
 
   story_views      story_views[]
   stories_specific stories_specific?
