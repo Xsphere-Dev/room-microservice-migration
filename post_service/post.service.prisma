@@ -28,15 +28,15 @@ model stories {
 
 model stories_specific {
   id           String   @id @default(uuid()) @db.VarChar(255)
-  main_feed_id String   @unique @db.VarChar(255)
-  stories      stories  @relation(fields: [main_feed_id], references: [id], onDelete: Cascade)
+  story_id String   @unique @db.VarChar(255)
+  stories      stories  @relation(fields: [story_id], references: [id], onDelete: Cascade)
   user_id      String[]
 }
 
 model stories_except {
   id           String   @id @default(uuid()) @db.VarChar(255)
-  main_feed_id String   @unique @db.VarChar(255)
-  stories      stories  @relation(fields: [main_feed_id], references: [id], onDelete: Cascade)
+  story_id String   @unique @db.VarChar(255)
+  stories      stories  @relation(fields: [story_id], references: [id], onDelete: Cascade)
   user_id      String[]
 }
 

@@ -7,7 +7,10 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "deploy:user": "npx prisma migrate deploy --schema ./user_service/user.service.prisma",
     "deploy:post": "npx prisma migrate deploy --schema ./post_service/post.service.prisma",
-    "deploy:all": "pnpm deploy:user; pnpm deploy:post"
+    "deploy:all": "pnpm deploy:user && pnpm deploy:post",
+    "dev:user": "npx prisma migrate dev --schema ./user_service/user.service.prisma",
+    "dev:post": "npx prisma migrate dev --schema ./post_service/post.service.prisma",
+    "dev:all": "pnpm dev:user && pnpm dev:post"
   },
   "keywords": [],
   "author": "",
