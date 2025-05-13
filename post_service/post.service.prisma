@@ -31,6 +31,8 @@ model stories_specific {
   story_id String   @unique @db.VarChar(255)
   stories      stories  @relation(fields: [story_id], references: [id], onDelete: Cascade)
   user_id      String[]
+  created_at          DateTime      @default(now())
+  updated_at          DateTime      @updatedAt
 }
 
 model stories_except {
@@ -38,6 +40,8 @@ model stories_except {
   story_id String   @unique @db.VarChar(255)
   stories      stories  @relation(fields: [story_id], references: [id], onDelete: Cascade)
   user_id      String[]
+  created_at          DateTime      @default(now())
+  updated_at          DateTime      @updatedAt
 }
 
 model story_views {
@@ -47,7 +51,9 @@ model story_views {
   is_story_reaction Boolean        @default(false)
   reaction_type     reaction_type?
   viewer_id         String
-  viewedAt          DateTime       @default(now())
+  viewed_at          DateTime       @default(now())
+  created_at          DateTime      @default(now())
+  updated_at          DateTime      @updatedAt
 
   @@unique([story_id, viewer_id])
 }
